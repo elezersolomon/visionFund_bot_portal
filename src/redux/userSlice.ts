@@ -25,7 +25,7 @@ const initialState: UserState = {
   token: "", // Initialize the token as an empty string
 };
 
-const userSlice = createSlice({
+export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
@@ -33,8 +33,11 @@ const userSlice = createSlice({
       return action.payload;
     },
     clearUser: () => initialState,
+    updateToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload; // Update only the token
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, updateToken } = userSlice.actions;
 export default userSlice.reducer;

@@ -37,7 +37,8 @@ const EditBotData: React.FC = () => {
     name: "",
     details: "",
   });
-
+  const userFirstName = useSelector((state: RootState) => state.user.token);
+  console.log("consoleData_ userfirstname", userFirstName);
   function setProductData(category: string, target: any) {
     if (target.name == "name") {
       if (category == "loanProducts")
