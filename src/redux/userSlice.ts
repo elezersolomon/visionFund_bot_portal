@@ -30,10 +30,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserState>) => {
+      console.log("consoleData_state", state);
       return action.payload;
     },
     clearUser: () => initialState,
     updateToken: (state, action: PayloadAction<string>) => {
+      console.log("consoleData_ update token", state, action.payload);
       state.token = action.payload; // Update only the token
     },
   },

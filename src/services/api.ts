@@ -117,7 +117,7 @@ export const resetUserPassword = async (
       data,
       {
         headers: {
-          Authorization: `Bearer ${Token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -152,7 +152,7 @@ export const fetchCustomers = async (token: string) => {
   try {
     const response = await axiosInstance().get(`/Customers`, {
       headers: {
-        Authorization: `Bearer ${Token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -192,7 +192,7 @@ export const createCustomer = async (
 };
 
 export const fetchFeedbacks = async (token: string): Promise<Feedback[]> => {
-  console.log("consoleData_ Token", Token);
+  // console.log("consoleData_ token", token);
   try {
     const response = await axiosInstance().get("/data/getFeedbacks", {
       headers: {
@@ -209,11 +209,12 @@ export const getBotData = async (token: string): Promise<botData[]> => {
   try {
     const response = await axiosInstance().get("/data/BotData", {
       headers: {
-        Authorization: `Bearer ${Token}`, // Include the token in the request headers
+        Authorization: `Bearer ${token}`, // Include the token in the request headers
       },
     });
     if (response.headers.token == "token expired") {
     }
+    console.log("value", token);
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch users");
@@ -233,7 +234,7 @@ export async function updateBotData(
 
       {
         headers: {
-          Authorization: `Bearer ${Token}`,
+          Authorization: `Bearer ${token}`,
           entry: entry,
           description: description,
         },
