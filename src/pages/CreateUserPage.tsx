@@ -158,16 +158,6 @@ const CreateUserPage: React.FC = () => {
           required
           style={{ marginBottom: "16px" }} // Add space between inputs
         />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          fullWidth
-          required
-          style={{ marginBottom: "16px" }} // Add space between inputs
-        />
         <FormControl fullWidth style={{ marginBottom: "16px" }}>
           <InputLabel>Role</InputLabel>
           <Select

@@ -1,29 +1,82 @@
-// src/pages/SettingsPage.tsx
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
+import { changePassword } from "../services/api";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux";
+import NotificationModal from "../components/NotificationModal";
 
 const SettingsPage: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
+  const user = useSelector((state: RootState) => state.user);
+  const validateInputs = () => {
+    let inputs = [currentPassword, newPassword, confirmNewPassword];
+    let result = true;
+    let message = "";
+
+    result = inputs.every((value) => {
+      console.log("consoleData_ value", value == "");
+
+      if (value == "") {
+        console.log("consoleData_ value null");
+        message = "please fill all the fields.";
+
+        return false;
+      } else if (value.length < 3) {
+        // console.log("consoleData_ value < 3");
+        message = "Password must be at least 3 characters long.";
+        return false;
+      } else if (currentPassword == newPassword) {
+        // result = false;
+        message = "new password is the same as old password";
+        return false;
+      }
+      if (newPassword != confirmNewPassword) {
+        result = false;
+        message = "new password and confirmed password do not match";
+        return false;
+      }
+      return true;
+    });
+
+    if (result == false) {
+      // console.log("consoleData_ result = false", result);
+      setMessage(message);
+      setMessageType("error");
+      setModalOpen(true);
+    }
+    return result;
+  };
 
   const handleChangePassword = async () => {
-    if (newPassword !== confirmNewPassword) {
-      alert("New passwords do not match");
-      return;
+    if (!validateInputs()) return;
+    try {
+      await changePassword(
+        {
+          userID: user.userID,
+          previousPassword: currentPassword,
+          newPassword: newPassword,
+        },
+        user.token
+      );
+
+      setMessage("password has been reset successfully");
+      setMessageType("success");
+      setModalOpen(true);
+    } catch (error: any) {
+      console.log("consoleData_ error ", error);
+      setMessage(error.message);
+
+      setMessageType("error");
+      setModalOpen(true);
     }
-
-    // Simulate verifying the current password
-    // Replace this with your actual verification logic
-    const isValidCurrentPassword = currentPassword === "adminpass"; // Replace with real check
-
-    if (!isValidCurrentPassword) {
-      alert("Current password is incorrect");
-      return;
-    }
-
-    // Here you would typically send the hashed password to your server to update the user's password
-    alert("Password updated successfully");
   };
 
   return (
@@ -47,6 +100,7 @@ const SettingsPage: React.FC = () => {
         fullWidth
         margin="normal"
       />
+
       <TextField
         label="Confirm New Password"
         type="password"
@@ -55,6 +109,7 @@ const SettingsPage: React.FC = () => {
         fullWidth
         margin="normal"
       />
+
       <Button
         variant="contained"
         color="primary"
@@ -63,6 +118,12 @@ const SettingsPage: React.FC = () => {
       >
         Apply
       </Button>
+      <NotificationModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        message={message!}
+        messageType={messageType}
+      />
     </Box>
   );
 };

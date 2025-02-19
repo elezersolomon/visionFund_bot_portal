@@ -116,7 +116,7 @@ export const resetUserPassword = async (
   data: {
     username: string;
     firstName: string;
-    userID: string;
+    userID: string | number;
     phoneNumber: string;
   },
   token: string
@@ -134,6 +134,31 @@ export const resetUserPassword = async (
     return response.data;
   } catch (error) {
     throw new Error("Failed to update user");
+  }
+};
+
+export const changePassword = async (
+  data: {
+    userID: string | number;
+    previousPassword: string;
+    newPassword: string;
+  },
+  token: string
+) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/api/users/changePassword`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.log("consoleData_ error1 ", error);
+    throw new Error(error.response.data.message);
   }
 };
 
