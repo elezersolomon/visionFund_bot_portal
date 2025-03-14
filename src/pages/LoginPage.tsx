@@ -1,95 +1,108 @@
-// src/pages/LoginPage.tsx
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography, Alert } from "@mui/material";
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  role: string;
-  username: string;
-  password: string;
-}
+import { TextField, Button, Container, Typography } from "@mui/material";
+import { loginUser } from "../services/api";
+import { setUser } from "../redux/userSlice";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const validateInputs = () => {
+    if (!username.trim()) {
+      setError("Username cannot be empty.");
+      return false;
+    }
+    if (username.length < 3) {
+      setError("Username must be at least 3 characters long.");
+      return false;
+    }
+    if (!password.trim()) {
+      setError("Password cannot be empty.");
+      return false;
+    }
+    if (password.length < 3) {
+      setError("Password must be at least 6 characters long.");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!validateInputs()) {
+      return;
+    }
+
     try {
-      const response = await fetch("/users.json");
-      const users: User[] = await response.json();
+      const response = await loginUser(dispatch, username, password);
 
-      const user = users.find(
-        (user) => user.username === username && user.password === password
-      );
-
-      if (user) {
-        // Redirect based on role
-        if (user.role === "admin") {
-          navigate("/admin/list-users");
-        } else if (user.role === "user") {
-          navigate("/user/customers");
-        }
-      } else {
-        setError("Invalid username or password");
+      // Check if the user is disabled
+      if (response.status === "Disabled") {
+        setError(
+          "Your account is disabled. Please contact the website administrator."
+        );
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching users data:", error);
-      setError("An error occurred. Please try again later.");
+
+      // If user is enabled, proceed with the login
+      if (response.role === "admin") {
+        navigate("/admin/admin-dashboard");
+      } else {
+        navigate("/user/user-dashboard");
+      }
+    } catch (err: any) {
+      console.log("consoleData_ err.message", err.message);
+
+      setError(err.message || "An error occurred during login.");
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        padding: 3,
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
+    <Container maxWidth="sm">
+      <Typography variant="h4" align="center" gutterBottom>
         Login
       </Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      <Box
-        component="form"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          width: "100%",
-          maxWidth: 400,
-        }}
-        onSubmit={handleLogin}
-      >
+      <form onSubmit={handleSubmit}>
         <TextField
           label="Username"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          required
+          error={Boolean(error && error.includes("Username"))}
+          helperText={error && error.includes("Username") ? error : ""}
         />
         <TextField
           label="Password"
           type="password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
+          error={Boolean(error && error.includes("Password"))}
+          helperText={error && error.includes("Password") ? error : ""}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" fullWidth>
           Login
         </Button>
-      </Box>
-    </Box>
+        {error &&
+          !error.includes("Username") &&
+          !error.includes("Password") && (
+            <Typography color="error" align="center" marginTop="1rem">
+              {error}
+            </Typography>
+          )}
+      </form>
+    </Container>
   );
 };
 

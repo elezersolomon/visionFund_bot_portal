@@ -4,26 +4,23 @@ import {
   Button,
   TextField,
   Typography,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  SelectChangeEvent,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import { createUser } from "../services/api";
+import { createCustomer } from "../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
 import NotificationModal from "../components/NotificationModal";
 
-const CreateUserPage: React.FC = () => {
+const AddCustomerPage: React.FC = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    telegramUserName: "",
     firstName: "",
     lastName: "",
-    email: "",
-    password: "",
-    role: "",
+    telegramID: "",
     phoneNumber: "",
+    address: "",
+    isCustomer: false,
   });
 
   const [message, setMessage] = useState<string | null>(null);
@@ -36,20 +33,12 @@ const CreateUserPage: React.FC = () => {
   const token = useSelector((state: RootState) => state.user.token);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
 
-    // Clear message when inputs are edited
-    if (message) {
-      setMessage(null);
-      setMessageType("info");
-    }
-  };
-
-  const handleRoleChange = (e: SelectChangeEvent<string>) => {
-    setFormData({ ...formData, role: e.target.value });
-
-    // Clear message when inputs are edited
     if (message) {
       setMessage(null);
       setMessageType("info");
@@ -57,7 +46,6 @@ const CreateUserPage: React.FC = () => {
   };
 
   const validateForm = () => {
-    // Validate name fields
     const nameRegex = /^[a-zA-Z]{2,30}$/;
     if (
       !nameRegex.test(formData.firstName) ||
@@ -66,7 +54,6 @@ const CreateUserPage: React.FC = () => {
       return "First name and last name must only contain letters and be 2-30 characters long.";
     }
 
-    // Validate phone number
     const phoneNumber = formData.phoneNumber;
     if (phoneNumber.length !== 10) {
       return "Phone number must be exactly 10 digits long.";
@@ -74,6 +61,10 @@ const CreateUserPage: React.FC = () => {
     const phoneRegex = /^[0-9]+$/;
     if (!phoneRegex.test(phoneNumber)) {
       return "Phone number must contain only digits.";
+    }
+
+    if (!formData.telegramID) {
+      return "Telegram ID is required.";
     }
 
     return null;
@@ -91,25 +82,23 @@ const CreateUserPage: React.FC = () => {
     }
 
     try {
-      await createUser(formData, token);
-      setMessage("User created successfully!");
+      await createCustomer(formData, token);
+      setMessage("Customer created successfully!");
       setMessageType("success");
       setModalOpen(true);
-      // Clear form fields
       setFormData({
-        username: "",
+        telegramUserName: "",
         firstName: "",
         lastName: "",
-        email: "",
-        password: "",
-        role: "",
+        telegramID: "",
         phoneNumber: "",
+        address: "",
+        isCustomer: false,
       });
     } catch (error: any) {
-      // Handle error response
       const errorMessage =
         error.response?.data?.message ||
-        "Error creating user. Please try again.";
+        "Error creating customer. Please try again.";
       setMessage(errorMessage);
       setMessageType("error");
       setModalOpen(true);
@@ -119,17 +108,15 @@ const CreateUserPage: React.FC = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Typography textAlign="center" variant="h4" gutterBottom>
-          Create New User
-        </Typography>
+        <Typography variant="h4">Add New Customer</Typography>
         <TextField
-          label="Username"
-          name="username"
-          value={formData.username}
+          label="Telegram Username"
+          name="telegramUserName"
+          value={formData.telegramUserName}
           onChange={handleChange}
           fullWidth
           required
-          style={{ marginBottom: "16px" }} // Add space between inputs
+          style={{ marginBottom: "16px" }}
         />
         <TextField
           label="First Name"
@@ -138,7 +125,7 @@ const CreateUserPage: React.FC = () => {
           onChange={handleChange}
           fullWidth
           required
-          style={{ marginBottom: "16px" }} // Add space between inputs
+          style={{ marginBottom: "16px" }}
         />
         <TextField
           label="Last Name"
@@ -147,29 +134,17 @@ const CreateUserPage: React.FC = () => {
           onChange={handleChange}
           fullWidth
           required
-          style={{ marginBottom: "16px" }} // Add space between inputs
+          style={{ marginBottom: "16px" }}
         />
         <TextField
-          label="Email"
-          name="email"
-          value={formData.email}
+          label="Telegram ID"
+          name="telegramID"
+          value={formData.telegramID}
           onChange={handleChange}
           fullWidth
           required
-          style={{ marginBottom: "16px" }} // Add space between inputs
+          style={{ marginBottom: "16px" }}
         />
-        <FormControl fullWidth style={{ marginBottom: "16px" }}>
-          <InputLabel>Role</InputLabel>
-          <Select
-            name="role"
-            value={formData.role}
-            onChange={handleRoleChange}
-            required
-          >
-            <MenuItem value="admin">Admin</MenuItem>
-            <MenuItem value="user">User</MenuItem>
-          </Select>
-        </FormControl>
         <TextField
           label="Phone Number"
           name="phoneNumber"
@@ -177,10 +152,20 @@ const CreateUserPage: React.FC = () => {
           onChange={handleChange}
           fullWidth
           required
-          style={{ marginBottom: "16px" }} // Add space between inputs
+          style={{ marginBottom: "16px" }}
         />
+        <TextField
+          label="Address"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          fullWidth
+          required
+          style={{ marginBottom: "16px" }}
+        />
+
         <Button type="submit" variant="contained" color="primary">
-          Create User
+          Add Customer
         </Button>
       </form>
       <NotificationModal
@@ -197,4 +182,4 @@ const CreateUserPage: React.FC = () => {
   );
 };
 
-export default CreateUserPage;
+export default AddCustomerPage;

@@ -1,43 +1,97 @@
-// src/pages/ListUsersPage.tsx
 import React, { useEffect, useState } from "react";
+import { fetchUsers } from "../services/api";
+import { RootState } from "../redux";
 import { useNavigate } from "react-router-dom";
 import {
+  Box,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableRow,
+  TableCell,
+  TableBody,
   Button,
-  Box,
+  CircularProgress,
+  Typography,
+  TextField,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  role: string;
-  username: string;
-  password: string;
-}
+import { User } from "../models";
 
-const ListUsersPage: React.FC = () => {
-  const [usersData, setUsersData] = useState<User[]>([]);
+const ListUsers: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const token = useSelector((state: RootState) => state.user.token);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("/users.json")
-      .then((response) => response.json())
-      .then((data) => setUsersData(data))
-      .catch((error) => console.error("Error fetching users data:", error));
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        const userData = await fetchUsers(token);
+        setUsers(userData);
+      } catch (error: any) {
+        setError("Failed to fetch users");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleEdit = (id: string) => {
-    navigate(`/admin/edit-user/${id}`);
+    fetchUserData();
+  }, [token]);
+
+  const handleEdit = (userID: number) => {
+    const userToEdit = users.find((user) => user.userID === userID);
+    if (userToEdit) {
+      navigate(`/admin/edit-user/${userID}`, { state: { user: userToEdit } });
+    }
   };
 
+  const filteredUsers = users.filter(
+    (user) =>
+      user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <Box>
+        <CircularProgress />
+        <Typography>Loading users...</Typography>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box>
+    <Box
+      sx={{
+        width: "100%",
+      }}
+    >
+      <Typography textAlign="center" variant="h4">
+        List Users
+      </Typography>
+      <TextField
+        label="Search Users"
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
       <Table>
         <TableHead>
           <TableRow>
@@ -46,23 +100,25 @@ const ListUsersPage: React.FC = () => {
             <TableCell>Phone</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Username</TableCell>
+            <TableCell>Status</TableCell>
             <TableCell>Edit</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {usersData.map((user) => (
-            <TableRow key={user.id}>
+          {filteredUsers.map((user) => (
+            <TableRow key={user.userID}>
               <TableCell>{user.firstName}</TableCell>
               <TableCell>{user.lastName}</TableCell>
-              <TableCell>{user.phone}</TableCell>
+              <TableCell>{user.phoneNumber}</TableCell>
               <TableCell>{user.role}</TableCell>
-              <TableCell>{user.username}</TableCell>
+              <TableCell>{user.userName}</TableCell>
+              <TableCell>{user.status}</TableCell>
               <TableCell>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleEdit(user.id)}
+                  onClick={() => handleEdit(user.userID)}
                 >
                   Edit
                 </Button>
@@ -80,4 +136,4 @@ const ListUsersPage: React.FC = () => {
   );
 };
 
-export default ListUsersPage;
+export default ListUsers;

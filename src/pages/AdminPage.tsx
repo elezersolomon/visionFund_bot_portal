@@ -8,7 +8,6 @@ const AdminPage: React.FC = () => {
 
   const onSubmit = (data: any) => {
     // Handle user creation logic
-    console.log("User created:", data);
   };
 
   return (

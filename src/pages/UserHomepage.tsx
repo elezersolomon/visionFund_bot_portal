@@ -34,12 +34,10 @@ const UserHomepage: React.FC = () => {
 
   const handleEdit = (id: number) => {
     // Logic to edit customer
-    console.log(`Edit customer with id ${id}`);
   };
 
   const handleDelete = (id: number) => {
     // Logic to delete customer
-    console.log(`Delete customer with id ${id}`);
   };
 
   return (
