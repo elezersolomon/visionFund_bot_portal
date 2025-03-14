@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
 import { setUser } from "../redux/userSlice";
 import { AppDispatch } from "../redux";
 import {
@@ -15,7 +15,7 @@ export const loginUser = async (
   password: string
 ) => {
   try {
-    const response = await axios.post("http://localhost:5000/api/auth/login", {
+    const response = await axiosInstance().post("/auth/login", {
       username,
       password,
     });
@@ -45,14 +45,11 @@ export const loginUser = async (
 
 export const fetchUsers = async (token: string): Promise<User[]> => {
   try {
-    const response = await axios.get<User[]>(
-      "http://localhost:5000/api/users",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the request headers
-        },
-      }
-    );
+    const response = await axiosInstance().get<User[]>("/users", {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the request headers
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -72,15 +69,11 @@ export const createUser = async (
   },
   token: string
 ) => {
-  const response = await axios.post(
-    "http://localhost:5000/api/users/",
-    userData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axiosInstance().post("/users/", userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 };
@@ -98,15 +91,11 @@ export const updateUser = async (
   token: string
 ) => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/users/`,
-      userData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosInstance().put(`/users/`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error("Failed to update user");
@@ -122,8 +111,8 @@ export const resetUserPassword = async (
   token: string
 ) => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/users/resetUserPassword`,
+    const response = await axiosInstance().put(
+      `/users/resetUserPassword`,
       data,
       {
         headers: {
@@ -146,15 +135,11 @@ export const changePassword = async (
   token: string
 ) => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/users/changePassword`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosInstance().put(`/users/changePassword`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.log("consoleData_ error1 ", error);
@@ -164,7 +149,7 @@ export const changePassword = async (
 
 export const fetchCustomers = async (token: string) => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/Customers`, {
+    const response = await axiosInstance().get(`/Customers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -176,15 +161,11 @@ export const fetchCustomers = async (token: string) => {
 };
 
 export const updateCustomer = async (customer: Customer, token: string) => {
-  const response = await axios.put(
-    "http://localhost:5000/api/customers",
-    customer,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axiosInstance().put("/customers", customer, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
 
@@ -200,29 +181,22 @@ export const createCustomer = async (
   },
   token: string
 ) => {
-  const response = await axios.post(
-    "http://localhost:5000/api/customers/",
-    customerData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axiosInstance().post("/customers/", customerData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 };
 
 export const fetchFeedbacks = async (token: string): Promise<Feedback[]> => {
   try {
-    const response = await axios.get(
-      "http://localhost:5000/api/data/getFeedbacks",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the request headers
-        },
-      }
-    );
+    const response = await axiosInstance().get("/data/getFeedbacks", {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the request headers
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch users");
@@ -231,7 +205,7 @@ export const fetchFeedbacks = async (token: string): Promise<Feedback[]> => {
 
 export const getBotData = async (token: string): Promise<botData[]> => {
   try {
-    const response = await axios.get("http://localhost:5000/api/data/BotData", {
+    const response = await axiosInstance().get("/data/BotData", {
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the request headers
       },
@@ -249,8 +223,8 @@ export async function updateBotData(
   entry?: string
 ) {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/data/setBotData`,
+    const response = await axiosInstance().put(
+      `/data/setBotData`,
       botData,
 
       {
@@ -271,14 +245,11 @@ export const getDashboardData = async (
   token: string
 ): Promise<DashboardData> => {
   try {
-    const response = await axios.get(
-      "http://localhost:5000/api/data/getDashboardData",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the request headers
-        },
-      }
-    );
+    const response = await axiosInstance().get("/data/getDashboardData", {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the request headers
+      },
+    });
 
     console.log("consoleData_ response", response);
 
