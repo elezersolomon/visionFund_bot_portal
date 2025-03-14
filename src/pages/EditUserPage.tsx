@@ -179,11 +179,7 @@ const EditUser: React.FC = () => {
         </Select>
       </FormControl>
 
-      <Box
-        component="form"
-        sx={{ display: "flex", flexDirection: "row", gap: 2, mt: 8 }}
-        onSubmit={handleSubmit}
-      >
+      <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mt: 8 }}>
         <Button type="submit" variant="contained" color="primary">
           Save
         </Button>
