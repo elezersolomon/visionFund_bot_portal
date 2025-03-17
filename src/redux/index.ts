@@ -3,10 +3,21 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Use localStorage for web
 import { combineReducers } from "redux";
 import userReducer from "./userSlice";
+//@ts-ignore
+import { encryptTransform } from "redux-persist-transform-encrypt";
 
 // Redux Persist Config
 const persistConfig = {
-  key: "root", // Root key in storage (you can change it if necessary)
+  transforms: [
+    encryptTransform({
+      secretKey: "my-super-secret-key",
+      onError: function (error: any) {
+        console.log("consoleData_ error encrypting data", error);
+      },
+    }),
+  ],
+  // Root key in storage (you can change it if necessary)
+  key: "root",
   storage, // Defaults to localStorage for web
 };
 
