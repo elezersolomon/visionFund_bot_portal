@@ -22,15 +22,11 @@ const SettingsPage: React.FC = () => {
     let message = "";
 
     result = inputs.every((value) => {
-      console.log("consoleData_ value", value == "");
-
       if (value == "") {
-        console.log("consoleData_ value null");
         message = "please fill all the fields.";
 
         return false;
       } else if (value.length < 3) {
-        // console.log("consoleData_ value < 3");
         message = "Password must be at least 3 characters long.";
         return false;
       } else if (currentPassword == newPassword) {
@@ -47,7 +43,6 @@ const SettingsPage: React.FC = () => {
     });
 
     if (result == false) {
-      // console.log("consoleData_ result = false", result);
       setMessage(message);
       setMessageType("error");
       setModalOpen(true);

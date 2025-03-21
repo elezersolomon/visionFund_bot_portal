@@ -1,5 +1,6 @@
 // src/redux/slices/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { clearScreenDown } from "readline";
 
 interface UserState {
   userID: number;
@@ -30,13 +31,11 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserState>) => {
-      console.log("consoleData_state", state);
       return action.payload;
     },
     clearUser: () => initialState,
     updateToken: (state, action: PayloadAction<string>) => {
-      console.log("consoleData_ update token", state, action.payload);
-      state.token = action.payload; // Update only the token
+      state.token = action.payload; // Ensures a new state is returned
     },
   },
 });

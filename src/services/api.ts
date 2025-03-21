@@ -15,10 +15,11 @@ export const loginUser = async (
   password: string
 ) => {
   try {
-    const response = await axiosInstance().post("/auth/login", {
+    const response = await axiosInstance.post("/auth/login", {
       username,
       password,
     });
+
     const { id, firstName, lastName, role, email, phoneNumber, status } =
       response.data.user;
     const token = response.data.token;
@@ -36,20 +37,15 @@ export const loginUser = async (
       })
     );
 
-    return { role: role, status: status };
+    return { role: role, status: status, token: token };
   } catch (error: any) {
-    console.log("consoleData_ error", error.response.data.message);
     throw error.response.data;
   }
 };
 
-export const fetchUsers = async (token: string): Promise<User[]> => {
+export const fetchUsers = async (): Promise<User[]> => {
   try {
-    const response = await axiosInstance().get<User[]>("/users", {
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the request headers
-      },
-    });
+    const response = await axiosInstance.get<User[]>("/users");
 
     return response.data;
   } catch (error) {
@@ -69,7 +65,7 @@ export const createUser = async (
   },
   token: string
 ) => {
-  const response = await axiosInstance().post("/users/", userData, {
+  const response = await axiosInstance.post("/users/", userData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -91,7 +87,7 @@ export const updateUser = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance().put(`/users/`, userData, {
+    const response = await axiosInstance.put(`/users/`, userData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -112,15 +108,11 @@ export const resetUserPassword = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance().put(
-      `/users/resetUserPassword`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosInstance.put(`/users/resetUserPassword`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error("Failed to update user");
@@ -136,21 +128,20 @@ export const changePassword = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance().put(`/users/changePassword`, data, {
+    const response = await axiosInstance.put(`/users/changePassword`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error: any) {
-    console.log("consoleData_ error1 ", error);
     throw new Error(error.response.data.message);
   }
 };
 
-export const fetchCustomers = async (token: string) => {
+export const fetchCustomers = async () => {
   try {
-    const response = await axiosInstance().get(`/Customers`, {
+    const response = await axiosInstance.get(`/Customers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -162,7 +153,7 @@ export const fetchCustomers = async (token: string) => {
 };
 
 export const updateCustomer = async (customer: Customer, token: string) => {
-  const response = await axiosInstance().put("/customers", customer, {
+  const response = await axiosInstance.put("/customers", customer, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -182,7 +173,7 @@ export const createCustomer = async (
   },
   token: string
 ) => {
-  const response = await axiosInstance().post("/customers/", customerData, {
+  const response = await axiosInstance.post("/customers/", customerData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -191,10 +182,9 @@ export const createCustomer = async (
   return response.data;
 };
 
-export const fetchFeedbacks = async (token: string): Promise<Feedback[]> => {
-  // console.log("consoleData_ token", token);
+export const fetchFeedbacks = async (): Promise<Feedback[]> => {
   try {
-    const response = await axiosInstance().get("/data/getFeedbacks", {
+    const response = await axiosInstance.get("/data/getFeedbacks", {
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the request headers
       },
@@ -205,16 +195,10 @@ export const fetchFeedbacks = async (token: string): Promise<Feedback[]> => {
   }
 };
 
-export const getBotData = async (token: string): Promise<botData[]> => {
+export const getBotData = async (): Promise<botData[]> => {
   try {
-    const response = await axiosInstance().get("/data/BotData", {
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the request headers
-      },
-    });
-    if (response.headers.token == "token expired") {
-    }
-    console.log("value", token);
+    const response = await axiosInstance.get("/data/BotData");
+
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch users");
@@ -228,7 +212,7 @@ export async function updateBotData(
   entry?: string
 ) {
   try {
-    const response = await axiosInstance().put(
+    const response = await axiosInstance.put(
       `/data/setBotData`,
       botData,
 
@@ -246,17 +230,9 @@ export async function updateBotData(
   }
 }
 
-export const getDashboardData = async (
-  token: string
-): Promise<DashboardData> => {
+export const getDashboardData = async (): Promise<DashboardData> => {
   try {
-    const response = await axiosInstance().get("/data/getDashboardData", {
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the request headers
-      },
-    });
-
-    console.log("consoleData_ response", response);
+    const response = await axiosInstance.get("/data/getDashboardData");
 
     return response.data;
   } catch (error) {

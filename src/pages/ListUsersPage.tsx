@@ -30,7 +30,7 @@ const ListUsers: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userData = await fetchUsers(token);
+        const userData = await fetchUsers();
         setUsers(userData);
       } catch (error: any) {
         setError("Failed to fetch users");

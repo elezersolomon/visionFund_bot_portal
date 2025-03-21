@@ -38,7 +38,6 @@ const EditBotData: React.FC = () => {
     details: "",
   });
   const stateToken = useSelector((state: RootState) => state.user.token);
-  console.log("consoleData_ usre token", stateToken);
   function setProductData(category: string, target: any) {
     if (target.name == "name") {
       if (category == "loanProducts")
@@ -64,7 +63,7 @@ const EditBotData: React.FC = () => {
   useEffect(() => {
     const fetchBotData = async () => {
       try {
-        const initialData = await getBotData(token);
+        const initialData = await getBotData();
         setBotData(initialData);
       } catch (error) {
         console.error("Error fetching bot data:", error);

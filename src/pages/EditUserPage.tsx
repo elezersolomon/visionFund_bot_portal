@@ -20,7 +20,7 @@ const EditUser: React.FC = () => {
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.user.token);
   const user = location.state?.user;
-
+  console.log("consoleData_ ", location);
   const initialFormData = {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -151,13 +151,20 @@ const EditUser: React.FC = () => {
         onChange={handleTextFieldChange}
         required
       />
-      <TextField
-        label="Role"
-        name="role"
-        value={formData.role}
-        onChange={handleTextFieldChange}
-        required
-      />
+      <FormControl fullWidth>
+        <InputLabel id="Role">Status</InputLabel>
+        <Select
+          labelId="Role"
+          label="Role"
+          name="role"
+          value={formData.role}
+          onChange={handleSelectChange}
+        >
+          <MenuItem value="user">User</MenuItem>
+          <MenuItem value="admin">Admin</MenuItem>
+        </Select>
+      </FormControl>
+
       <TextField
         label="Username"
         name="userName"

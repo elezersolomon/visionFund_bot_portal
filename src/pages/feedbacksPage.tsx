@@ -13,7 +13,7 @@ const FeedbackPage: React.FC = () => {
   useEffect(() => {
     const getFeedbacks = async () => {
       try {
-        const response = await fetchFeedbacks(token);
+        const response = await fetchFeedbacks();
 
         const sortedFeedbacks = response.sort(
           (a: Feedback, b: Feedback) =>

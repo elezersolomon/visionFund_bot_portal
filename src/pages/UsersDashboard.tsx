@@ -43,8 +43,7 @@ const UsersDashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const data = await getDashboardData(token);
-        console.log("consoleData_ dashboard data", data);
+        const data = await getDashboardData();
         setDashboardData(data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);

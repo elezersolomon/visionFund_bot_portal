@@ -18,6 +18,7 @@ import { getDashboardData } from "../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
 import { DashboardData } from "../models";
+import { store } from "../redux/store";
 
 const COLORS = [
   "#0088FE",
@@ -32,13 +33,13 @@ const AdminDashboard: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
-  const token = useSelector((state: RootState) => state.user.token);
+  const state = store.getState();
+  const token = state.user.token;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const data = await getDashboardData(token);
-        console.log("consoleData_ dashboard data", data);
+        const data = await getDashboardData();
         setDashboardData(data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
