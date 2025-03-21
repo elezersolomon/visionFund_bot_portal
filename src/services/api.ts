@@ -141,11 +141,7 @@ export const changePassword = async (
 
 export const fetchCustomers = async () => {
   try {
-    const response = await axiosInstance.get(`/Customers`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get(`/Customers`);
     return response.data;
   } catch (error) {
     throw new Error("Error fetching customers");
@@ -184,11 +180,7 @@ export const createCustomer = async (
 
 export const fetchFeedbacks = async (): Promise<Feedback[]> => {
   try {
-    const response = await axiosInstance.get("/data/getFeedbacks", {
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the request headers
-      },
-    });
+    const response = await axiosInstance.get("/data/getFeedbacks");
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch users");
