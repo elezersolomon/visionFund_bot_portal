@@ -11,9 +11,7 @@ const persistConfig = {
   transforms: [
     encryptTransform({
       secretKey: "my-super-secret-key",
-      onError: function (error: any) {
-        console.log("consoleData_ error encrypting data", error);
-      },
+      onError: function (error: any) {},
     }),
   ],
   // Root key in storage (you can change it if necessary)

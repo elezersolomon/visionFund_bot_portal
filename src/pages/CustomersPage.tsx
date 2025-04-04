@@ -34,7 +34,7 @@ const ListCustomers: React.FC = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const customerData = await fetchCustomers(token);
+        const customerData = await fetchCustomers();
         setCustomers(customerData);
         setFilteredCustomers(customerData); // Set the filtered customers initially to all customers
       } catch (error: any) {

@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography } from "@mui/material";
 import { loginUser } from "../services/api";
-import { setUser } from "../redux/userSlice";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
