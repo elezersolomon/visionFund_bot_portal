@@ -87,14 +87,14 @@ export const updateUser = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance.put(`/users/`, userData, {
+    const response = await axiosInstance.put(`/users/${userData?.userID}`, userData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error) {
-    throw new Error("Failed to update user");
+    throw new Error("Failed to update user "+ error);
   }
 };
 

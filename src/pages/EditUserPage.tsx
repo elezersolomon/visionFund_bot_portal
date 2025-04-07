@@ -19,7 +19,7 @@ const EditUser: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.user.token);
-  const user = location.state?.user;
+  const user = location?.state?.user;
   console.log("consoleData_ ", location);
   const initialFormData = {
     firstName: user?.firstName || "",
@@ -65,27 +65,38 @@ const EditUser: React.FC = () => {
     e.preventDefault();
 
     try {
-      await updateUser(formData, token);
-
-      // Set success message and show modal
-      setMessage("User updated successfully!");
-      setMessageType("success");
-      setModalOpen(true);
-
-      // Reset the form to blank values after submission
-      setFormData({
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        role: "",
-        email: "",
-        userName: "",
-        userID: "",
-        password: "",
-        status: "", // Or default status value
-      });
+      const response = await updateUser(formData, token);
+  
+      // Handle success (200 status)
+    
+        setMessage(response?.message || "User updated successfully!!!");
+        setMessageType("success");
+        setModalOpen(true);
+  
+        // Reset the form to blank values after a successful update
+        setFormData({
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
+          role: "",
+          email: "",
+          userName: "",
+          userID: "",
+          password: "",
+          status: "", // Or default status value
+        });
+      
+      // Handle error (400 status)
+       if (response?.status === 400) {
+        setMessage(
+          response?.message || "Unable to update user, please check the data and try again"
+        );
+        setMessageType("error");
+        setModalOpen(true); // Show the modal with the error message
+      }
     } catch (error) {
-      setMessage("Failed to update user. Please try again.");
+      // Handle unexpected errors
+      setMessage("Failed to update user. Please try again. " + error);
       setMessageType("error");
       setModalOpen(true);
     }
@@ -155,7 +166,7 @@ const EditUser: React.FC = () => {
         required
       />
       <FormControl fullWidth>
-        <InputLabel id="Role">Status</InputLabel>
+        <InputLabel id="Role">Role</InputLabel>
         <Select
           labelId="Role"
           label="Role"
@@ -200,7 +211,12 @@ const EditUser: React.FC = () => {
 
       <NotificationModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          if (messageType === "success") {
+            navigate(`/admin/list-users`); // Redirect only on success
+          }
+        }}
         message={message!}
         messageType={messageType}
       />
