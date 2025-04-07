@@ -91,8 +91,8 @@ const EditUser: React.FC = () => {
     }
   };
 
-  function resetPassword(e: React.MouseEvent) {
-    resetUserPassword(
+  async function resetPassword(e: React.MouseEvent) {
+    const result = await resetUserPassword(
       {
         username: formData.userName,
         userID: formData.userID,
@@ -105,6 +105,9 @@ const EditUser: React.FC = () => {
       setMessageType("error");
       setModalOpen(true);
     });
+    setMessage(result.message);
+    setMessageType("success");
+    setModalOpen(true);
   }
 
   return (
