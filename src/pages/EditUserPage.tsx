@@ -102,22 +102,28 @@ const EditUser: React.FC = () => {
     }
   };
 
-  function resetPassword(e: React.MouseEvent) {
-    resetUserPassword(
-      {
-        username: formData.userName,
-        userID: formData.userID,
-        firstName: formData.firstName,
-        phoneNumber: formData.phoneNumber,
-      },
-      token
-    ).catch((error) => {
-      setMessage("Failed to reset user password. Please try again.");
+  // handle the reset password functionality
+  async function resetPassword(e: React.MouseEvent) {
+    try {
+      const response = await resetUserPassword(
+        {
+          username: formData.userName,
+          userID: formData.userID,
+          firstName: formData.firstName,
+          phoneNumber: formData.phoneNumber,
+        },
+        token
+      );
+      setMessage(response?.message || "User password reset successfully!!!");
+      setMessageType("success");
+      setModalOpen(true);
+    }
+    catch (error) {
+      setMessage("Failed to reset user password. Please try again."+error);
       setMessageType("error");
       setModalOpen(true);
-    });
+    }
   }
-
   return (
     <Box
       component="form"
