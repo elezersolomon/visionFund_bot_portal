@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { changePassword } from "../services/api";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux";
+import { RootState, store } from "../redux/store";
 import NotificationModal from "../components/NotificationModal";
+import { clearUser } from "../redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const SettingsPage: React.FC = () => {
+    const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -34,7 +37,7 @@ const SettingsPage: React.FC = () => {
         message = "new password is the same as old password";
         return false;
       }
-      if (newPassword != confirmNewPassword) {
+      if (newPassword !== confirmNewPassword) {
         result = false;
         message = "new password and confirmed password do not match";
         return false;
@@ -53,7 +56,7 @@ const SettingsPage: React.FC = () => {
   const handleChangePassword = async () => {
     if (!validateInputs()) return;
     try {
-      await changePassword(
+      const response= await changePassword(
         {
           userID: user.userID,
           previousPassword: currentPassword,
@@ -62,7 +65,7 @@ const SettingsPage: React.FC = () => {
         user.token
       );
 
-      setMessage("password has been reset successfully");
+      setMessage(response?.message || "password has been reset successfully");
       setMessageType("success");
       setModalOpen(true);
     } catch (error: any) {
@@ -115,7 +118,13 @@ const SettingsPage: React.FC = () => {
       </Button>
       <NotificationModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          if (messageType === "success") {
+            store.dispatch(clearUser()); // Clear user data from Redux store
+            navigate(`/login`); // Redirect only on success
+          }
+        }}
         message={message!}
         messageType={messageType}
       />

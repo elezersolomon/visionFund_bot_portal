@@ -65,7 +65,7 @@ export const createUser = async (
   },
   token: string
 ) => {
-  const response = await axiosInstance.post("/users/", userData, {
+  const response = await axiosInstance.post("/users/create/", userData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -87,7 +87,7 @@ export const updateUser = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance.put(`/users/${userData?.userID}`, userData, {
+    const response = await axiosInstance.put(`/users/edit/${userData?.userID}`, userData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
