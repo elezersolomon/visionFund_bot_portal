@@ -97,9 +97,10 @@ const ListUsers: React.FC = () => {
           <TableRow>
             <TableCell>First Name</TableCell>
             <TableCell>Last Name</TableCell>
+            <TableCell>Username</TableCell>
+            <TableCell>Email</TableCell>
             <TableCell>Phone</TableCell>
             <TableCell>Role</TableCell>
-            <TableCell>Username</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Edit</TableCell>
             <TableCell>Delete</TableCell>
@@ -110,9 +111,10 @@ const ListUsers: React.FC = () => {
             <TableRow key={user.userID}>
               <TableCell>{user.firstName}</TableCell>
               <TableCell>{user.lastName}</TableCell>
+              <TableCell>{user.userName}</TableCell>
+              <TableCell>{user.email}</TableCell>
               <TableCell>{user.phoneNumber}</TableCell>
               <TableCell>{user.role}</TableCell>
-              <TableCell>{user.userName}</TableCell>
               <TableCell>{user.status}</TableCell>
               <TableCell>
                 <Button
