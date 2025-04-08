@@ -17,6 +17,7 @@ const SettingsPage: React.FC = () => {
     "info"
   );
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [logoutNeeded, setLogoutNeeded] = useState<boolean>(false);
 
   const user = useSelector((state: RootState) => state.user);
   const validateInputs = () => {
@@ -65,15 +66,17 @@ const SettingsPage: React.FC = () => {
         user.token
       );
 
-      setMessage(response?.message || "password has been reset successfully");
+      setMessage(response?.message || "password has been changed successfully");
       setMessageType("success");
       setModalOpen(true);
     } catch (error: any) {
       console.log("consoleData_ error ", error);
       setMessage(error.message);
-
       setMessageType("error");
       setModalOpen(true);
+      if(error.message === "Trials Exceeded.") {
+        setLogoutNeeded(true);
+      }
     }
   };
 
@@ -120,7 +123,7 @@ const SettingsPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => {
           setModalOpen(false);
-          if (messageType === "success") {
+          if (messageType === "success" || logoutNeeded) {
             store.dispatch(clearUser()); // Clear user data from Redux store
             navigate(`/login`); // Redirect only on success
           }
