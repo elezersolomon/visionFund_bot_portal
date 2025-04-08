@@ -103,7 +103,6 @@ const ListUsers: React.FC = () => {
             <TableCell>Role</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Edit</TableCell>
-            <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -123,11 +122,6 @@ const ListUsers: React.FC = () => {
                   onClick={() => handleEdit(user.userID)}
                 >
                   Edit
-                </Button>
-              </TableCell>
-              <TableCell>
-                <Button variant="contained" color="secondary">
-                  Delete
                 </Button>
               </TableCell>
             </TableRow>
