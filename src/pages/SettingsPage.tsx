@@ -19,7 +19,6 @@ const SettingsPage: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
   const user = useSelector((state: RootState) => state.user);
-  const navigate = useNavigate();
 
   const validateInputs = () => {
     let inputs = [currentPassword, newPassword, confirmNewPassword];
@@ -70,7 +69,6 @@ const SettingsPage: React.FC = () => {
       setMessage(response?.message || "password has been reset successfully");
       setMessageType("success");
       setModalOpen(true);
-      navigate("/login");
     } catch (error: any) {
       console.log("consoleData_ error ", error);
       setMessage(error.message);
