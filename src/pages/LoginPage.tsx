@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
       return false;
     }
     if (password.length < 3) {
-      setError("Password must be at least 6 characters long.");
+      setError("Password must be at least 3 characters long.");
       return false;
     }
     setError("");
