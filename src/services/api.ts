@@ -39,7 +39,18 @@ export const loginUser = async (
 
     return { role: role, status: status, token: token };
   } catch (error: any) {
-    throw error.response.data;
+    let message = "An error occurred during login.";
+
+    if (error?.response?.data?.message) {
+      message = error.response.data.message;
+    } else if (error?.request) {
+      message = "Unable to connect to the backend service. Please try again later.";
+    } else if (error?.message) {
+      message = error.message;
+    }
+
+    // Throw with a clear message to be caught on the frontend
+    throw new Error(message);
   }
 };
 
