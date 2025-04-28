@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Container, Typography } from "@mui/material";
 import { loginUser } from "../services/api";
-
+const logo = require("./../assets/VF-full-logo.png");
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -57,9 +57,31 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" align="center" gutterBottom>
-        Login
+    <Container
+      maxWidth="sm"
+      style={{
+        minHeight: "100vh", // Make sure container takes full height of the screen
+        display: "flex", // Enable flexbox
+        flexDirection: "column", // Arrange children vertically
+        justifyContent: "center", // Center content vertically
+        alignItems: "center", // Center content horizontally
+      }}
+    >
+      {/* /add the logo here */}
+      <img
+        src={logo}
+        alt="VFMFI logo"
+        style={{ width: "200px", padding: "1rem" }}
+      />
+      <Typography
+        variant="h5"
+        align="center"
+        mb-5
+        gutterBottom
+        sx={{ fontWeight: "500", marginBottom: "2rem" }}
+        color="primary"
+      >
+        VFMFI telegram bot portal
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -83,7 +105,13 @@ const LoginPage: React.FC = () => {
           error={Boolean(error && error.includes("Password"))}
           helperText={error && error.includes("Password") ? error : ""}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ marginTop: "1rem", padding: "0.8rem" }}
+        >
           Login
         </Button>
         {error &&

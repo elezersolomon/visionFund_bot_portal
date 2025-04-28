@@ -56,7 +56,7 @@ const FeedbackPage: React.FC = () => {
   return (
     <Box sx={{ paddingLeft: 5 }}>
       <Box sx={{ paddingLeft: 5 }}>
-        <Typography variant="h4" gutterBottom align="center">
+        <Typography variant="h4" color="primary.main" sx={{ m: 4 }} gutterBottom align="center" >
           Customer Feedbacks
         </Typography>
         <Box sx={{ paddingTop: 8 }}>
