@@ -21,6 +21,8 @@ import { RootState } from "../redux"; // Adjust the path as needed
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
 
+const logo = require("../assets/VF-logo-icon.png");
+
 interface LayoutProps {
   links: { to: string; text: string }[];
   role: string;
@@ -63,10 +65,20 @@ const Layout: React.FC<LayoutProps> = ({ links, role }) => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed" sx={{ width: "100%", zIndex: 1201 }}>
+      <AppBar
+        position="fixed"
+        sx={{ width: "100%", zIndex: 1201, borderBottom: "3px solid #E85E2F" }}
+      >
         <Toolbar>
+          <img
+            src={logo}
+            alt="VFMFI Logo"
+            style={{ width: "40px", height: "40px" }}
+          />
           <Typography variant="h6" sx={{ flexGrow: 1, pl: 2 }}>
-            {role === "admin" ? "Admin Panel" : "User Panel"}
+            {role === "admin"
+              ? "Telegram Bot Admin Panel"
+              : "Telegram Bot User Panel"}
           </Typography>
           {userFirstName && (
             <Typography variant="h6" sx={{ mr: 2 }}>
@@ -119,8 +131,8 @@ const Layout: React.FC<LayoutProps> = ({ links, role }) => {
               sx={{
                 my: 1.5,
                 mx: 2,
-                bgcolor: "primary.light",
-                color: "primary.contrastText",
+                bgcolor: "custom.white",
+                color: "primary.main",
                 "&:hover": {
                   boxShadow: 6,
                 },

@@ -80,7 +80,7 @@ const ListUsers: React.FC = () => {
         width: "100%",
       }}
     >
-      <Typography textAlign="center" variant="h4">
+      <Typography textAlign="center" variant="h4" color="primary.main" sx={{ m: 4 }}>
         List Users
       </Typography>
       <TextField

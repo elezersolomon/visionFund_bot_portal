@@ -21,12 +21,12 @@ import { DashboardData } from "../models";
 import { store } from "../redux/store";
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#A28DFF",
-  "#FF6384",
+  "#092F87",
+  "#E85E2F",
+  "#312D2A",
+  "#092F87",
+  "#E85E2F",
+  "#312D2A",
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -99,6 +99,7 @@ const AdminDashboard: React.FC = () => {
     <Grid container spacing={2}>
       <Grid
         sx={{
+          marginTop: "5px",
           boxShadow: "none",
           paddingTop: "10px",
           display: "flex", // Makes the Grid item itself flexible
@@ -125,7 +126,7 @@ const AdminDashboard: React.FC = () => {
                 }}
               >
                 <CardContent sx={{ textAlign: "center" }}>
-                  <Typography variant="h6">{status} Users</Typography>
+                  <Typography variant="h6">{status} Portal Users</Typography>
                   <Typography variant="h4" fontWeight="bold">
                     {count}
                   </Typography>
@@ -153,7 +154,7 @@ const AdminDashboard: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={status}>
               <Card
                 sx={{
-                  borderLeft: `6px solid ${
+                  borderLeft: `10px solid ${
                     CustomerStatStatusColors[status] || "#2196F3"
                   }`,
                   height: 150, // Increased card height
@@ -180,7 +181,7 @@ const AdminDashboard: React.FC = () => {
       <Grid spacing={2} item xs={12} md={6}>
         <Card>
           <CardContent>
-            <Typography variant="h6">Users by Role</Typography>
+            <Typography variant="h6">Portal Users by Role</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -213,7 +214,7 @@ const AdminDashboard: React.FC = () => {
       <Grid item xs={12} md={6}>
         <Card>
           <CardContent>
-            <Typography variant="h6">User Creation Graph</Typography>
+            <Typography variant="h6">Portal Users Creation Graph</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart
                 data={prepareLineData(dashboardData.portalUsers.countByDate)}
