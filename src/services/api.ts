@@ -9,6 +9,28 @@ import {
   Content,
   DashboardData,
 } from "../models";
+
+// function to get areas list
+export const getAreas = async () => {
+  try {
+    const response = await axiosInstance.get("/getAreas");
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch areas");
+  }
+};
+
+// function to get branches list
+export const getBranches = async () => {
+  try {
+    const response = await axiosInstance.get("/getBranches");
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch branches");
+  }
+};
+
+
 export const loginUser = async (
   dispatch: AppDispatch,
   username: string,
@@ -150,6 +172,7 @@ export const changePassword = async (
   }
 };
 
+// function to fetch all customers
 export const fetchCustomers = async () => {
   try {
     const response = await axiosInstance.get(`/Customers`);
@@ -158,6 +181,17 @@ export const fetchCustomers = async () => {
     throw new Error("Error fetching customers");
   }
 };
+
+// function to get customers by portal userName
+export const getCustomerByPortalUserName = async (userName: string) => {
+  try {
+    const response = await axiosInstance.get(`/customers/getMyCustomers/${userName}`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Error fetching customers");
+  }
+};
+
 
 export const updateCustomer = async (customer: Customer, token: string) => {
   const response = await axiosInstance.put("/customers", customer, {
