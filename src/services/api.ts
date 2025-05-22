@@ -30,7 +30,6 @@ export const getBranches = async () => {
   }
 };
 
-
 export const loginUser = async (
   dispatch: AppDispatch,
   username: string,
@@ -42,8 +41,16 @@ export const loginUser = async (
       password,
     });
 
-    const { id, firstName, lastName, role, email, phoneNumber, status } =
-      response.data.user;
+    const {
+      id,
+      firstName,
+      lastName,
+      role,
+      branchID,
+      email,
+      phoneNumber,
+      status,
+    } = response.data.user;
     const token = response.data.token;
     dispatch(
       setUser({
@@ -52,6 +59,7 @@ export const loginUser = async (
         firstName,
         lastName,
         role,
+        branchID,
         email,
         phoneNumber,
         token,
@@ -66,7 +74,8 @@ export const loginUser = async (
     if (error?.response?.data?.message) {
       message = error.response.data.message;
     } else if (error?.request) {
-      message = "Unable to connect to the backend service. Please try again later.";
+      message =
+        "Unable to connect to the backend service. Please try again later.";
     } else if (error?.message) {
       message = error.message;
     }
@@ -120,14 +129,18 @@ export const updateUser = async (
   token: string
 ) => {
   try {
-    const response = await axiosInstance.put(`/users/edit/${userData?.userID}`, userData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.put(
+      `/users/edit/${userData?.userID}`,
+      userData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    throw new Error("Failed to update user "+ error);
+    throw new Error("Failed to update user " + error);
   }
 };
 
@@ -185,13 +198,14 @@ export const fetchCustomers = async () => {
 // function to get customers by portal userName
 export const getCustomerByPortalUserName = async (userName: string) => {
   try {
-    const response = await axiosInstance.get(`/customers/getMyCustomers/${userName}`);
+    const response = await axiosInstance.get(
+      `/customers/getMyCustomers/${userName}`
+    );
     return response.data;
   } catch (error) {
     throw new Error("Error fetching customers");
   }
 };
-
 
 export const updateCustomer = async (customer: Customer, token: string) => {
   const response = await axiosInstance.put("/customers", customer, {

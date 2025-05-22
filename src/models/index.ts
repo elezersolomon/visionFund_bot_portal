@@ -4,6 +4,8 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  branchID: number;
+  branchName: string;
   email: string;
   phoneNumber: string;
   status: string;

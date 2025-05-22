@@ -50,6 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ links, role }) => {
         firstName: "",
         lastName: "",
         role: "",
+        branchID:0,
         email: "",
         phoneNumber: "",
         token: "",
