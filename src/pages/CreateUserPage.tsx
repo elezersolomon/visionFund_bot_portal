@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -10,18 +10,40 @@ import {
   FormControl,
   SelectChangeEvent,
 } from "@mui/material";
-import { createUser } from "../services/api";
+import { createUser, getBranches } from "../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
 import NotificationModal from "../components/NotificationModal";
 
 const CreateUserPage: React.FC = () => {
+  interface Branch {
+    id: number;
+    name: string;
+  }
+
+  const [branches, setBranches] = useState<Branch[]>([]);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await getBranches();
+        setBranches(response);
+        console.log("Branches:", response);
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
     lastName: "",
     email: "",
     password: "",
+    branch: "",
     role: "",
     phoneNumber: "",
   });
@@ -79,6 +101,20 @@ const CreateUserPage: React.FC = () => {
     return null;
   };
 
+  // handle branch change
+  const handleBranchChange = (e: SelectChangeEvent<string>) => {
+    const selectedBranchID = e.target.value;
+    console.log("Branch selected:", selectedBranchID);
+    setFormData({ ...formData, branch: e.target.value });
+    // get branch details from api
+
+    // Clear message when inputs are edited
+    if (message) {
+      setMessage(null);
+      setMessageType("info");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationError = validateForm();
@@ -102,6 +138,7 @@ const CreateUserPage: React.FC = () => {
         lastName: "",
         email: "",
         password: "",
+        branch:"",
         role: "",
         phoneNumber: "",
       });
@@ -119,7 +156,13 @@ const CreateUserPage: React.FC = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Typography textAlign="center" variant="h4" color="primary.main" gutterBottom sx={{ m: 4 }}>
+        <Typography
+          textAlign="center"
+          variant="h4"
+          color="primary.main"
+          gutterBottom
+          sx={{ m: 4 }}
+        >
           Create New User
         </Typography>
         <TextField
@@ -158,6 +201,23 @@ const CreateUserPage: React.FC = () => {
           required
           style={{ marginBottom: "16px" }} // Add space between inputs
         />
+        <FormControl fullWidth style={{ marginBottom: "16px" }}>
+          <InputLabel>Branch *</InputLabel>
+          <Select
+            name="branch"
+            value={formData.branch || ""}
+            onChange={handleBranchChange}
+            required
+          >
+            <MenuItem value="">Select Branch</MenuItem>
+            {branches?.length > 0 &&
+              branches.map((branch) => (
+                <MenuItem key={branch.id} value={branch.id} color="primary.main">
+                  {branch.name}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
         <FormControl fullWidth style={{ marginBottom: "16px" }}>
           <InputLabel>Role</InputLabel>
           <Select

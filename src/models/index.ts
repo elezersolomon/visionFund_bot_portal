@@ -4,6 +4,8 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  branchID: number;
+  branchName: string;
   email: string;
   phoneNumber: string;
   status: string;
@@ -16,6 +18,8 @@ export interface Customer {
   userLName: string;
   phoneNumber: string;
   telegramUserName: string;
+  areaID: number;
+  districtName: string;
   status: string; // Changing the status here
   dateRegistered: string;
   address: String;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -11,21 +11,58 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { resetUserPassword, updateUser } from "../services/api";
+import { getBranches, resetUserPassword, updateUser } from "../services/api";
 import { RootState } from "../redux";
 import { useSelector } from "react-redux";
 import NotificationModal from "../components/NotificationModal";
+
 const EditUser: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.user.token);
   const user = location?.state?.user;
-  console.log("consoleData_ ", location);
+
+  interface Branch {
+    id: number;
+    name: string;
+  }
+
+  const [branches, setBranches] = useState<Branch[]>([]);
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await getBranches();
+        setBranches(response);
+        console.log("Branches:", response);
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+
+  useEffect(() => {
+    if (
+      branches.length > 0 &&
+      user?.branchID &&
+      !formData.branch // Only set if not already set
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        branch: String(user.branchID),
+      }));
+    }
+    // eslint-disable-next-line
+  }, [branches]);
+
   const initialFormData = {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     phoneNumber: user?.phoneNumber || "",
     role: user?.role || "",
+    branch: user?.branchid ? String(user.branchid) : "",
     email: user?.email || "",
     userName: user?.userName || "",
     userID: user?.userID || "",
@@ -61,35 +98,56 @@ const EditUser: React.FC = () => {
     });
   };
 
+  // handle branch change
+  const handleBranchChange = (e: SelectChangeEvent<string>) => {
+    const selectedBranchID = e.target.value;
+    console.log("Branch selected:", selectedBranchID);
+    setFormData({ ...formData, branch: e.target.value });
+    // get branch details from api
+
+    // Clear message when inputs are edited
+    if (message) {
+      setMessage(null);
+      setMessageType("info");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await updateUser(formData, token);
-  
+      // Convert branch to number before sending
+      const payload = {
+        ...formData,
+        branchid: formData.branch ? Number(formData.branch) : null,
+      };
+      const response = await updateUser(payload, token);
+
       // Handle success (200 status)
-    
-        setMessage(response?.message || "User updated successfully!!!");
-        setMessageType("success");
-        setModalOpen(true);
-  
-        // Reset the form to blank values after a successful update
-        setFormData({
-          firstName: "",
-          lastName: "",
-          phoneNumber: "",
-          role: "",
-          email: "",
-          userName: "",
-          userID: "",
-          password: "",
-          status: "", // Or default status value
-        });
-      
+
+      setMessage(response?.message || "User updated successfully!!!");
+      setMessageType("success");
+      setModalOpen(true);
+
+      // Reset the form to blank values after a successful update
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        role: "",
+        branch: "",
+        email: "",
+        userName: "",
+        userID: "",
+        password: "",
+        status: "", // Or default status value
+      });
+
       // Handle error (400 status)
-       if (response?.status === 400) {
+      if (response?.status === 400) {
         setMessage(
-          response?.message || "Unable to update user, please check the data and try again"
+          response?.message ||
+            "Unable to update user, please check the data and try again"
         );
         setMessageType("error");
         setModalOpen(true); // Show the modal with the error message
@@ -117,9 +175,8 @@ const EditUser: React.FC = () => {
       setMessage(response?.message || "User password reset successfully!!!");
       setMessageType("success");
       setModalOpen(true);
-    }
-    catch (error) {
-      setMessage("Failed to reset user password. Please try again."+error);
+    } catch (error) {
+      setMessage("Failed to reset user password. Please try again." + error);
       setMessageType("error");
       setModalOpen(true);
     }
@@ -139,6 +196,14 @@ const EditUser: React.FC = () => {
       <Typography textAlign="center" variant="h4">
         Edit User
       </Typography>
+      <TextField
+        label="Username"
+        name="userName"
+        value={formData.userName}
+        onChange={handleTextFieldChange}
+        disabled
+        required
+      />
       <TextField
         label="First Name"
         name="firstName"
@@ -181,14 +246,24 @@ const EditUser: React.FC = () => {
           <MenuItem value="admin">Admin</MenuItem>
         </Select>
       </FormControl>
+      <FormControl fullWidth style={{ marginBottom: "16px" }}>
+        <InputLabel>Branch *</InputLabel>
+        <Select
+          name="branch"
+          value={formData.branch}
+          onChange={handleBranchChange}
+          required
+        >
+          <MenuItem value="">Select Branch</MenuItem>
+          {branches?.length > 0 &&
+            branches.map((branch) => (
+              <MenuItem key={branch.id} value={String(branch.id)}>
+                {branch.name}
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
 
-      <TextField
-        label="Username"
-        name="userName"
-        value={formData.userName}
-        onChange={handleTextFieldChange}
-        required
-      />
       <FormControl fullWidth>
         <InputLabel id="status-label">Status</InputLabel>
         <Select

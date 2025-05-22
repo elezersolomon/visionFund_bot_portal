@@ -54,6 +54,7 @@ const ListUsers: React.FC = () => {
       user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.branchName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -80,7 +81,12 @@ const ListUsers: React.FC = () => {
         width: "100%",
       }}
     >
-      <Typography textAlign="center" variant="h4" color="primary.main" sx={{ m: 4 }}>
+      <Typography
+        textAlign="center"
+        variant="h4"
+        color="primary.main"
+        sx={{ m: 4 }}
+      >
         List Users
       </Typography>
       <TextField
@@ -101,6 +107,8 @@ const ListUsers: React.FC = () => {
             <TableCell>Email</TableCell>
             <TableCell>Phone</TableCell>
             <TableCell>Role</TableCell>
+            <TableCell>Branch Code</TableCell>
+            <TableCell>Branch Name</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Edit</TableCell>
           </TableRow>
@@ -114,6 +122,8 @@ const ListUsers: React.FC = () => {
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.phoneNumber}</TableCell>
               <TableCell>{user.role}</TableCell>
+              <TableCell>{user.branchID}</TableCell>
+              <TableCell>{user.branchName}</TableCell>
               <TableCell>{user.status}</TableCell>
               <TableCell>
                 <Button

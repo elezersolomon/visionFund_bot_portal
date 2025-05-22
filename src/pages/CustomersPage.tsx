@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { fetchCustomers, updateCustomer } from "../services/api";
+import { fetchCustomers, getCustomerByPortalUserName, updateCustomer } from "../services/api";
 import { RootState } from "../redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { setUser } from "../redux/userSlice";
+import { useDispatch } from "react-redux";
+
+
 import {
   Box,
   Table,
@@ -21,6 +25,10 @@ import { SelectChangeEvent } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Customer } from "../models";
 
+import { getAreas } from "../services/api";
+
+import formatDate from "../utils/formatDate";
+
 const ListCustomers: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
@@ -29,12 +37,28 @@ const ListCustomers: React.FC = () => {
   const [error, setError] = useState<string>("");
   const token = useSelector((state: RootState) => state.user.token); // Get token from Redux state
 
-  const navigate = useNavigate();
+  const [areas, setAreas] = useState<any[]>([]); // State for areas
+  const portalUserName = useSelector((state: RootState) => state.user.username);
+  const userRole = useSelector((state: RootState) => state.user.role);
+
 
   useEffect(() => {
-    const fetchCustomerData = async () => {
+    // fetch areas
+    const fetchAreas = async () => {
       try {
-        const customerData = await fetchCustomers();
+        const areas = await getAreas();
+        setAreas(areas);
+        console.log("Areas:", areas);
+      } catch (error) {
+        console.error("Error fetching areas:", error);
+      }
+    };
+
+    const fetchCustomerData = async () => {
+
+      try {
+        // const portalUserName = user?.userName || "";
+        const customerData = await getCustomerByPortalUserName(portalUserName);
         setCustomers(customerData);
         setFilteredCustomers(customerData); // Set the filtered customers initially to all customers
       } catch (error: any) {
@@ -44,6 +68,7 @@ const ListCustomers: React.FC = () => {
       }
     };
 
+    fetchAreas(); // Fetch areas when the component mounts
     fetchCustomerData();
   }, [token]);
 
@@ -55,6 +80,9 @@ const ListCustomers: React.FC = () => {
         customer.userLName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.phoneNumber.includes(searchTerm) ||
         customer.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.districtName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatDate(customer.dateRegistered).toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.telegramUserName
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
@@ -66,6 +94,8 @@ const ListCustomers: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
+  const navigate = useNavigate(); // useNavigate hook defined at the top level
+
   const handleEdit = (customerID: number) => {
     const customerToEdit = customers.find(
       (customer) => customer.userID === customerID
@@ -74,6 +104,38 @@ const ListCustomers: React.FC = () => {
       navigate(`/admin/edit-customer/${customerID}`, {
         state: { customer: customerToEdit },
       });
+    }
+  };
+
+  const handleAreaChange = async (
+    event: SelectChangeEvent<string>,
+    customerID: number
+  ) => {
+    const newAreaID = parseInt(event.target.value, 10);
+
+    // Find the customer to update
+    const customerToUpdate = customers.find(
+      (customer) => customer.userID === customerID
+    );
+    if (customerToUpdate) {
+      try {
+        // Create a new customer object with the updated area
+        const updatedCustomer = { ...customerToUpdate, areaID: newAreaID };
+
+        // Use updateCustomer API to update the customer
+        await updateCustomer(updatedCustomer, token); // Pass the updated customer object
+
+        // Update the state with the new customer data
+        setCustomers((prevCustomers) =>
+          prevCustomers.map((customer) =>
+            customer.userID === customerID
+              ? { ...customer, areaID: Number(newAreaID) }
+              : customer
+          )
+        );
+      } catch (error) {
+        console.error("Failed to update area", error);
+      }
     }
   };
 
@@ -133,17 +195,23 @@ const ListCustomers: React.FC = () => {
 
   return (
     <Box>
-      <Typography textAlign="center" color="primary.main" variant="h4" sx={{ m: 4 }} gutterBottom >
+      <Typography
+        textAlign="center"
+        color="primary.main"
+        variant="h4"
+        sx={{ m: 4 }}
+        gutterBottom
+      >
         Customer List
       </Typography>
-      {/* <Button
+      <Button
         variant="contained"
         color="primary"
         onClick={handleAddCustomer}
         style={{ marginBottom: "16px" }} // Add some spacing
       >
         Add New Customer
-      </Button> */}
+      </Button>
       <TextField
         label="Search Customers"
         variant="outlined"
@@ -161,6 +229,7 @@ const ListCustomers: React.FC = () => {
             <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Telegram Username</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Date Registered</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Area</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
             {/* <TableCell>Edit</TableCell> */}
           </TableRow>
@@ -177,6 +246,27 @@ const ListCustomers: React.FC = () => {
                 <TableCell>
                   {new Date(customer.dateRegistered).toLocaleDateString()}
                 </TableCell>
+                <TableCell>
+                  <FormControl fullWidth>
+                    <Select
+                      fullWidth
+                      value={customer?.areaID?.toString() || ""} // Ensure value is a string
+                      onChange={(event) =>
+                        handleAreaChange(event, customer.userID)
+                      } // Handle area change
+                      disabled={userRole=== "user"} // Disable if the role is "user"
+
+                    >
+                      <MenuItem value="">Select Area</MenuItem>
+                      {areas.map((area) => (
+                        <MenuItem key={area.id} value={area.id}>
+                          {area.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </TableCell>
+
                 <TableCell>
                   <FormControl fullWidth>
                     <Select

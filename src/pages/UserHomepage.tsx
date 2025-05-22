@@ -18,6 +18,7 @@ interface Customer {
   name: string;
   phone: string;
   telegram: string;
+  areaID: number;
   address: string;
 }
 

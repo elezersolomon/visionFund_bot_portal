@@ -8,6 +8,7 @@ interface UserState {
   firstName: string;
   lastName: string;
   role: string;
+  branchID: number;
   email: string;
   phoneNumber: string;
   status: string;
@@ -20,6 +21,7 @@ const initialState: UserState = {
   firstName: "",
   lastName: "",
   role: "",
+  branchID: 0,
   email: "",
   phoneNumber: "",
   status: "",
