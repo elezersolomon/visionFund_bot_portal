@@ -48,7 +48,7 @@ const ListCustomers: React.FC = () => {
       try {
         const areas = await getAreas();
         setAreas(areas);
-        console.log("Areas:", areas);
+        // console.log("Areas:", areas);
       } catch (error) {
         console.error("Error fetching areas:", error);
       }

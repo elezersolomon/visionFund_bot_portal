@@ -28,9 +28,9 @@ const CreateUserPage: React.FC = () => {
       try {
         const response = await getBranches();
         setBranches(response);
-        console.log("Branches:", response);
+        // console.log("Branches:", response);
       } catch (error) {
-        console.error("Error fetching branches:", error);
+        // console.error("Error fetching branches:", error);
       }
     };
 
@@ -104,7 +104,7 @@ const CreateUserPage: React.FC = () => {
   // handle branch change
   const handleBranchChange = (e: SelectChangeEvent<string>) => {
     const selectedBranchID = e.target.value;
-    console.log("Branch selected:", selectedBranchID);
+    // console.log("Branch selected:", selectedBranchID);
     setFormData({ ...formData, branch: e.target.value });
     // get branch details from api
 
