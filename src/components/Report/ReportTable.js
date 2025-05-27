@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 const ReportTable = ({ data }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 10;
 
   // Reset to first page when data changes
@@ -10,10 +11,22 @@ const ReportTable = ({ data }) => {
     setCurrentPage(1);
   }, [data]);
 
-  const sortedData = React.useMemo(() => {
+  // Filter data based on search term
+  const filteredData = React.useMemo(() => {
     if (!data || data.length === 0) return [];
+    if (!searchTerm) return data;
 
-    let sortableItems = [...data];
+    return data.filter(item =>
+      Object.values(item).some(value =>
+        value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [data, searchTerm]);
+
+  const sortedData = React.useMemo(() => {
+    if (!filteredData || filteredData.length === 0) return [];
+
+    let sortableItems = [...filteredData];
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key];
@@ -25,7 +38,7 @@ const ReportTable = ({ data }) => {
       });
     }
     return sortableItems;
-  }, [data, sortConfig]);
+  }, [filteredData, sortConfig]);
 
   const paginatedData = sortedData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -50,6 +63,33 @@ const ReportTable = ({ data }) => {
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Search Box */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex justify-end">
+          <div className="w-64">
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2 text-right">
+              Search
+            </label>
+            <input
+              type="text"
+              id="search"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // Reset to first page when searching
+              }}
+              placeholder="Search in all columns..."
+              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2"
+            />
+            {searchTerm && (
+              <div className="mt-2 text-sm text-gray-600 text-right">
+                Found {sortedData.length} results
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

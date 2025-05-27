@@ -96,7 +96,6 @@ const ReportPage = () => {
           <option value="lead">Lead Report</option>
         </select>
       </div>
-
       <ReportFilters reportType={reportType} onFilterChange={setFilters} />
 
       <div className="my-4">
@@ -108,6 +107,7 @@ const ReportPage = () => {
           {loading ? "Loading..." : "Fetch Reports"}
         </button>
       </div>
+
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
