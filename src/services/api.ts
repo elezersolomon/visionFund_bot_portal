@@ -290,3 +290,52 @@ export const getDashboardData = async (): Promise<DashboardData> => {
     throw new Error("Failed to fetch users");
   }
 };
+
+/*report routes*/
+
+// report for customers
+export const getCustomerReports = async (filters: {
+  fromDate?: string;
+  toDate?: string;
+  district?: string;
+  branch?: string;
+  status?: string;
+}) => {
+  try {
+    const response = await axiosInstance.post("/reports/customerReports", filters);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch customer reports");
+  }
+};
+
+// report for users
+export const getUserReports = async (filters: {
+  fromDate?: string;
+  toDate?: string;
+  district?: string;
+  branch?: string;
+  status?: string;
+}) => {
+  try {
+    const response = await axiosInstance.post("/reports/userReports", filters);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch user reports");
+  }
+};
+
+// report for leads
+export const getLeadReports = async (filters: {
+  fromDate?: string;
+  toDate?: string;
+}) => {
+  try {
+    const response = await axiosInstance.post("/reports/leadReports", filters);
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch lead reports");
+  }
+};
+
+

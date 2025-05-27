@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReportFilters from "../components/Report/ReportFilters";
 import ReportTable from "../components/Report/ReportTable";
-import mockData from "../data/mockData";
+import {
+  getCustomerReports,
+  getUserReports,
+  getLeadReports,
+} from "../services/api";
 
 interface ReportItem {
   name: string;
@@ -13,84 +17,113 @@ interface ReportItem {
 }
 
 interface Filters {
-  name?: string;
-  phone?: string;
-  status?: string;
-  district?: string;
-  branch?: string;
   fromDate?: string;
   toDate?: string;
+  district?: string;
+  branch?: string;
+  status?: string;
 }
 
 type ReportType = "customer" | "user" | "lead";
 
-type MockDataType = {
-  [K in ReportType]: ReportItem[];
-};
-
 const ReportPage = () => {
   const [reportType, setReportType] = useState<ReportType>("customer");
   const [filters, setFilters] = useState<Filters>({});
-  const [filteredData, setFilteredData] = useState<ReportItem[]>([]);
+  const [data, setData] = useState<ReportItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const typedMockData = mockData as MockDataType;
-    let data = typedMockData[reportType];
+  const fetchReports = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let response: ReportItem[];
 
-    if (typeof filters.name === "string") {
-      data = data.filter((item: ReportItem) =>
-        item.name.toLowerCase().includes(filters.name!.toLowerCase())
-      );
+      // Only send relevant filters based on report type
+      const filterParams = {
+        ...filters,
+        // For lead reports, only include date filters
+        ...(reportType === "lead" && {
+          district: undefined,
+          branch: undefined,
+          status: undefined,
+        }),
+      };
+
+      switch (reportType) {
+        case "customer":
+          response = await getCustomerReports(filterParams);
+          break;
+        case "user":
+          response = await getUserReports(filterParams);
+          break;
+        case "lead":
+          response = await getLeadReports({
+            fromDate: filters.fromDate,
+            toDate: filters.toDate,
+          });
+          break;
+        default:
+          return;
+      }
+
+      setData(response);
+    } catch (err) {
+      setError("Failed to fetch reports. Please try again.");
+      console.error("Error fetching reports:", err);
+    } finally {
+      setLoading(false);
     }
-
-    if (typeof filters.phone === "string") {
-      data = data.filter((item: ReportItem) =>
-        item.phone?.includes(filters.phone!)
-      );
-    }
-
-    if (typeof filters.status === "string") {
-      data = data.filter((item: ReportItem) => item.status === filters.status);
-    }
-
-    if (typeof filters.district === "string") {
-      data = data.filter(
-        (item: ReportItem) => item.district === filters.district
-      );
-    }
-
-    if (typeof filters.branch === "string") {
-      data = data.filter((item: ReportItem) => item.branch === filters.branch);
-    }
-
-    if (filters.fromDate && filters.toDate) {
-      const from = new Date(filters.fromDate);
-      const to = new Date(filters.toDate);
-      data = data.filter((item: ReportItem) => {
-        const date = new Date(item.date);
-        return date >= from && date <= to;
-      });
-    }
-
-    setFilteredData(data);
-  }, [filters, reportType]);
+  };
 
   return (
-    <div>
-      <div className="mb-4">
-        <label className="mr-2 font-semibold">Report Type:</label>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Report Type:
+        </label>
         <select
           value={reportType}
-          onChange={(e) => setReportType(e.target.value as ReportType)}
-          className="border p-1 rounded"
+          onChange={(e) => {
+            setReportType(e.target.value as ReportType);
+            setData([]); // Clear existing data when report type changes
+            setFilters({}); // Reset filters when report type changes
+          }}
+          className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="customer">Customer Registration</option>
           <option value="user">User Report</option>
           <option value="lead">Lead Report</option>
         </select>
       </div>
+
       <ReportFilters reportType={reportType} onFilterChange={setFilters} />
-      <ReportTable data={filteredData} />
+
+      <div className="my-4">
+        <button
+          onClick={fetchReports}
+          disabled={loading}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
+        >
+          {loading ? "Loading..." : "Fetch Reports"}
+        </button>
+      </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          {error}
+        </div>
+      )}
+
+      {data.length > 0 ? (
+        <ReportTable data={data} />
+      ) : (
+        !loading && (
+          <div className="text-center text-gray-600">
+            No data available. Click "Fetch Reports" to load data.
+          </div>
+        )
+      )}
     </div>
   );
 };
