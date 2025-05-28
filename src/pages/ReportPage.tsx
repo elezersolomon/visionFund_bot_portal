@@ -6,6 +6,7 @@ import {
   getUserReports,
   getLeadReports,
 } from "../services/api";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 interface ReportItem {
   name: string;
@@ -52,12 +53,30 @@ const ReportPage = () => {
 
       switch (reportType) {
         case "customer":
+          // send the request only if there are from and to dates
+          if (!filters.fromDate || !filters.toDate) {
+            setError("Please select both From Date and To Date.");
+            setLoading(false);
+            return;
+          }
           response = await getCustomerReports(filterParams);
           break;
         case "user":
+          // send the request only if there are from and to dates
+          if (!filters.fromDate || !filters.toDate) {
+            setError("Please select both From Date and To Date.");
+            setLoading(false);
+            return;
+          }
           response = await getUserReports(filterParams);
           break;
         case "lead":
+          // send the request only if there are from and to dates
+          if (!filters.fromDate || !filters.toDate) {
+            setError("Please select both From Date and To Date.");
+            setLoading(false);
+            return;
+          }
           response = await getLeadReports({
             fromDate: filters.fromDate,
             toDate: filters.toDate,
@@ -83,13 +102,14 @@ const ReportPage = () => {
           Report Type:
         </label>
         <select
+        
           value={reportType}
           onChange={(e) => {
             setReportType(e.target.value as ReportType);
             setData([]); // Clear existing data when report type changes
             setFilters({}); // Reset filters when report type changes
           }}
-          className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow border rounded p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="customer">Customer Registration</option>
           <option value="user">User Report</option>
@@ -104,10 +124,15 @@ const ReportPage = () => {
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
         >
-          {loading ? "Loading..." : "Fetch Reports"}
+          {loading ? (
+            <CircularProgress />
+          ) : filters.fromDate && filters.toDate ? (
+            "View Report"
+          ) : (
+            "View Report"
+          )}
         </button>
       </div>
-
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">

@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
       <Typography
         variant="h5"
         align="center"
-        mb-5
+        className="mb-5"
         gutterBottom
         sx={{ fontWeight: "500", marginBottom: "2rem" }}
         color="primary"

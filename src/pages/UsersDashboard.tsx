@@ -13,7 +13,14 @@ import {
   Line,
   LineChart,
 } from "recharts";
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { getDashboardData } from "../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
@@ -53,7 +60,23 @@ const UsersDashboard: React.FC = () => {
     fetchDashboardData();
   }, [token]);
 
-  if (!dashboardData) return <Typography>Loading...</Typography>;
+  if (!dashboardData)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          height: "100vh",
+          width: "50vw",
+        }}
+      >
+        <CircularProgress />
+        <Typography>Loading Data...</Typography>
+      </Box>
+    );
 
   /**
    * Converts an object into an array suitable for Recharts PieChart.

@@ -108,7 +108,7 @@ const AddCustomerPage: React.FC = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Typography variant="h4">Add New Customer</Typography>
+        {/* <Typography variant="h4">Add New Customer</Typography> */}
         <TextField
           label="Telegram Username"
           name="telegramUserName"

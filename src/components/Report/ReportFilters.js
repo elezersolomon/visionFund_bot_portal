@@ -62,23 +62,25 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
     <div className="bg-white p-4 rounded-lg shadow mb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">From Date</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">From Date *</label>
           <input
             type="date"
             name="fromDate"
             value={formState.fromDate}
             onChange={handleChange}
+            required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
 
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">To Date</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">To Date *</label>
           <input
             type="date"
             name="toDate"
             value={formState.toDate}
             onChange={handleChange}
+            required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>

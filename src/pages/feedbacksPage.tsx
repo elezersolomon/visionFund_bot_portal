@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper, Stack } from "@mui/material";
+import { Box, Typography, Paper, Stack, CircularProgress } from "@mui/material";
 import { fetchFeedbacks } from "../services/api"; // Example API call
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
@@ -54,110 +54,135 @@ const FeedbackPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ paddingLeft: 5 }}>
-      <Box sx={{ paddingLeft: 5 }}>
-        <Typography variant="h4" color="primary.main" sx={{ m: 4 }} gutterBottom align="center" >
-          Customer Feedbacks
-        </Typography>
-        <Box sx={{ paddingTop: 8 }}>
-          <Stack spacing={4}>
-            {feedbacks.map((feedback, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  position: "relative",
-                }}
-              >
-                {/* Username */}
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                    position: "relative",
-                  }}
-                >
-                  {feedback.telegramUserName}
-                </Typography>
-
-                {/* Speech Bubble Pointer */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "22px",
-                    left: "10px",
-                    width: 0,
-                    height: 0,
-                    borderLeft: "10px solid transparent",
-                    borderRight: "10px solid transparent",
-                    borderBottom: "10px solid #f9f9f9", // Color matches the text box
-                  }}
-                />
-
-                {/* Feedback Box */}
-                <Paper
-                  elevation={4}
-                  sx={{
-                    borderRadius: 2,
-                    backgroundColor: "#f9f9f9",
-                    width: "fit-content",
-                    maxWidth: "100%",
-                    marginLeft: "10px",
-                  }}
-                >
+    <>
+      {feedbacks.length === 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            height: "100vh",
+            width: "50vw",
+          }}
+        >
+          <CircularProgress />
+          <Typography>Loading Data...</Typography>
+        </Box>
+      ) : (
+        <Box sx={{ paddingLeft: 5 }}>
+          <Box sx={{ paddingLeft: 5 }}>
+            <Typography
+              variant="h4"
+              color="primary.main"
+              sx={{ m: 4 }}
+              gutterBottom
+              align="center"
+            >
+              Customer Feedbacks
+            </Typography>
+            <Box sx={{ paddingTop: 8 }}>
+              <Stack spacing={4}>
+                {feedbacks.map((feedback, index) => (
                   <Box
+                    key={index}
                     sx={{
-                      padding: 0.5,
-                      maxWidth: "100%",
+                      display: "flex",
                       flexDirection: "column",
+                      alignItems: "flex-start",
+                      position: "relative",
                     }}
                   >
-                    <Box
+                    {/* Username */}
+                    <Typography
+                      variant="subtitle1"
                       sx={{
-                        display: "flex",
-                        width: "100%",
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        position: "relative",
                       }}
                     >
-                      <Typography
-                        variant="caption"
+                      {feedback.telegramUserName}
+                    </Typography>
+
+                    {/* Speech Bubble Pointer */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "22px",
+                        left: "10px",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "10px solid transparent",
+                        borderRight: "10px solid transparent",
+                        borderBottom: "10px solid #f9f9f9", // Color matches the text box
+                      }}
+                    />
+
+                    {/* Feedback Box */}
+                    <Paper
+                      elevation={4}
+                      sx={{
+                        borderRadius: 2,
+                        backgroundColor: "#f9f9f9",
+                        width: "fit-content",
+                        maxWidth: "100%",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      <Box
                         sx={{
-                          color: "#999",
-                          fontSize: "0.70rem",
-                          marginTop: 0,
+                          padding: 0.5,
+                          maxWidth: "100%",
+                          flexDirection: "column",
                         }}
                       >
-                        {formatDate(feedback.dateCreated)}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        padding: 2,
-                        paddingTop: 1,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{ color: "#555", marginBottom: 1 }}
-                      >
-                        {feedback.feedback}
-                      </Typography>
-                    </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            width: "100%",
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "#999",
+                              fontSize: "0.70rem",
+                              marginTop: 0,
+                            }}
+                          >
+                            {formatDate(feedback.dateCreated)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            padding: 2,
+                            paddingTop: 1,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography
+                            variant="body1"
+                            sx={{ color: "#555", marginBottom: 1 }}
+                          >
+                            {feedback.feedback}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Paper>
                   </Box>
-                </Paper>
-              </Box>
-            ))}
-          </Stack>
+                ))}
+              </Stack>
+            </Box>
+          </Box>
         </Box>
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 

@@ -5,18 +5,22 @@ import { combineReducers } from "redux";
 import userReducer from "./userSlice";
 //@ts-ignore
 import { encryptTransform } from "redux-persist-transform-encrypt";
+const ReduxPersistKey = process.env.REACT_APP_REDUX_PERSIST_KEY;
 
 // Redux Persist Config
 const persistConfig = {
   transforms: [
     encryptTransform({
-      secretKey: "my-super-secret-key",
-      onError: function (error: any) {},
+      secretKey: ReduxPersistKey || 'default-key-for-development',
+      onError: function (error: any) {
+        console.error('Redux Persist Encryption Error:', error);
+      },
     }),
   ],
   // Root key in storage (you can change it if necessary)
   key: "root",
   storage, // Defaults to localStorage for web
+  debug: true, // Enable debug mode to see persist logs
 };
 
 // Combine reducers (in case you add more slices later)
