@@ -50,7 +50,7 @@ const LoginPage: React.FC = () => {
         navigate("/user/user-dashboard");
       }
     } catch (err: any) {
-      console.log("consoleData_ err.message", err.message);
+      // console.log("consoleData_ err.message", err.message);
 
       setError(err.message || "An error occurred during login.");
     }
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
       <Typography
         variant="h5"
         align="center"
-        mb-5
+        className="mb-5"
         gutterBottom
         sx={{ fontWeight: "500", marginBottom: "2rem" }}
         color="primary"

@@ -14,6 +14,7 @@ import FeedbacksPage from "./pages/feedbacksPage";
 import PrivateRoute from "./components/PrivateRoute";
 import EditBotData from "./pages/EditBotDataPage";
 import UsersDashboard from "./pages/UsersDashboard";
+import ReportPage from "./pages/ReportPage";
 const AppRoutes: React.FC = () => (
   <BrowserRouter>
     <Routes>
@@ -34,6 +35,7 @@ const AppRoutes: React.FC = () => (
                 { to: "/admin/customers", text: "Manage Customers" },
                 { to: "/admin/feedbacks", text: "Feedbacks" },
                 { to: "/admin/editbot", text: "Edit bot" },
+                { to: "/admin/reports", text: "Reports" },
               ]}
             />
           </PrivateRoute>
@@ -50,6 +52,7 @@ const AppRoutes: React.FC = () => (
         <Route path="settings" element={<SettingsPage />} />
         <Route path="feedbacks" element={<FeedbacksPage />} />
         <Route path="editbot" element={<EditBotData />} />
+        <Route path="reports" element={<ReportPage />} />
       </Route>
 
       {/* Private Routes for User */}
@@ -64,6 +67,7 @@ const AppRoutes: React.FC = () => (
                 { to: "/user/customers", text: "Manage Customers" },
                 { to: "/user/feedbacks", text: "Feedbacks" },
                 { to: "/user/editbot", text: "Edit bot" },
+                { to: "/user/reports", text: "Reports" },
               ]}
             />
           </PrivateRoute>

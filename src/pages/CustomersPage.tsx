@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchCustomers, getCustomerByPortalUserName, updateCustomer } from "../services/api";
+import {
+  fetchCustomers,
+  getCustomerByPortalUserName,
+  updateCustomer,
+} from "../services/api";
 import { RootState } from "../redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setUser } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
-
 
 import {
   Box,
@@ -41,21 +44,19 @@ const ListCustomers: React.FC = () => {
   const portalUserName = useSelector((state: RootState) => state.user.username);
   const userRole = useSelector((state: RootState) => state.user.role);
 
-
   useEffect(() => {
     // fetch areas
     const fetchAreas = async () => {
       try {
         const areas = await getAreas();
         setAreas(areas);
-        console.log("Areas:", areas);
+        // console.log("Areas:", areas);
       } catch (error) {
         console.error("Error fetching areas:", error);
       }
     };
 
     const fetchCustomerData = async () => {
-
       try {
         // const portalUserName = user?.userName || "";
         const customerData = await getCustomerByPortalUserName(portalUserName);
@@ -80,9 +81,13 @@ const ListCustomers: React.FC = () => {
         customer.userLName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customer.phoneNumber.includes(searchTerm) ||
         customer.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.districtName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.districtName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         customer.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        formatDate(customer.dateRegistered).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatDate(customer.dateRegistered)
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         customer.telegramUserName
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
@@ -178,7 +183,9 @@ const ListCustomers: React.FC = () => {
 
   if (loading) {
     return (
-      <Box>
+      <Box
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, height: "100vh", width: "50vw" }}
+      >
         <CircularProgress />
         <Typography>Loading customers...</Typography>
       </Box>
@@ -204,14 +211,14 @@ const ListCustomers: React.FC = () => {
       >
         Customer List
       </Typography>
-      <Button
+      {/* <Button
         variant="contained"
         color="primary"
         onClick={handleAddCustomer}
         style={{ marginBottom: "16px" }} // Add some spacing
       >
         Add New Customer
-      </Button>
+      </Button> */}
       <TextField
         label="Search Customers"
         variant="outlined"
@@ -254,8 +261,7 @@ const ListCustomers: React.FC = () => {
                       onChange={(event) =>
                         handleAreaChange(event, customer.userID)
                       } // Handle area change
-                      disabled={userRole=== "user"} // Disable if the role is "user"
-
+                      disabled={userRole === "user"} // Disable if the role is "user"
                     >
                       <MenuItem value="">Select Area</MenuItem>
                       {areas.map((area) => (

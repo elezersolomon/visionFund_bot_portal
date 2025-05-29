@@ -4,8 +4,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -13,7 +11,14 @@ import {
   ResponsiveContainer,
   Line,
 } from "recharts";
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { getDashboardData } from "../services/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux";
@@ -49,7 +54,23 @@ const AdminDashboard: React.FC = () => {
     fetchDashboardData();
   }, [token]);
 
-  if (!dashboardData) return <Typography>Loading...</Typography>;
+  if (!dashboardData)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          height: "100vh",
+          width: "50vw",
+        }}
+      >
+        <CircularProgress />
+        <Typography>Loading Data...</Typography>
+      </Box>
+    );
   const preparePortalUserDataByRole = (
     obj: Record<string, number> | undefined
   ) => {

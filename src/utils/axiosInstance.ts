@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("consoleData_ error", error);
+    // console.log("consoleData_ error", error);
     if (error.response?.data?.message === "token expired") {
       store.dispatch(clearUser()); // Clear user data on token expiration
       window.location.href = "/login"; // Redirect to login

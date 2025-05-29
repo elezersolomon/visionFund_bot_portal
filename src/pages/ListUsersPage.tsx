@@ -60,10 +60,12 @@ const ListUsers: React.FC = () => {
 
   if (loading) {
     return (
-      <Box>
-        <CircularProgress />
-        <Typography>Loading users...</Typography>
-      </Box>
+       <Box
+              sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, height: "100vh", width: "50vw" }}
+            >
+              <CircularProgress />
+              <Typography>Loading Users...</Typography>
+            </Box>
     );
   }
 

@@ -71,7 +71,7 @@ const SettingsPage: React.FC = () => {
       setMessageType("success");
       setModalOpen(true);
     } catch (error: any) {
-      console.log("consoleData_ error ", error);
+      // console.log("consoleData_ error ", error);
       setMessage(error.message);
       setMessageType("error");
       setModalOpen(true);
