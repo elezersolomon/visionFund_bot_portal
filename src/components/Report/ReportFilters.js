@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getAreas, getBranches } from '../../services/api';
+import { useSelector } from 'react-redux';
 
 const ReportFilters = ({ reportType, onFilterChange }) => {
+  const userBranch = useSelector((state) => state?.user?.branchID);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [branchOptions, setBranchOptions] = useState([]);
+  const [userBranchDetails, setUserBranchDetails] = useState(null);
+  
   const [formState, setFormState] = useState({
     fromDate: '',
     toDate: '',
@@ -12,17 +16,26 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
     status: ''
   });
 
-  // Reset form state when report type changes
+  // Reset form state when report type changes, but maintain district if user is not from head office
   useEffect(() => {
-    setFormState({
-      fromDate: '',
-      toDate: '',
-      district: '',
-      branch: '',
-      status: ''
+    setFormState(prev => {
+      const resetState = {
+        fromDate: '',
+        toDate: '',
+        district: '',
+        branch: '',
+        status: ''
+      };
+
+      // If user is not from head office, maintain their district
+      if (userBranchDetails && userBranchDetails.areaid !== 1) {
+        resetState.district = userBranchDetails.areaid.toString();
+      }
+
+      return resetState;
     });
     onFilterChange({}); // Reset filters in parent component
-  }, [reportType]);
+  }, [reportType, userBranchDetails]);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -31,13 +44,27 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
         const branches = await getBranches();
         setDistrictOptions(areas);
         setBranchOptions(branches);
+
+        // Find user's branch details
+        if (userBranch) {
+          const userBranchInfo = branches.find(branch => branch.id === userBranch);
+          setUserBranchDetails(userBranchInfo);
+          
+          // If user's branch is not head office (district ID 1), set and disable district
+          if (userBranchInfo && userBranchInfo.areaid !== 1) {
+            setFormState(prev => ({
+              ...prev,
+              district: userBranchInfo.areaid.toString()
+            }));
+          }
+        }
       } catch (error) {
         console.error('Error fetching options:', error);
       }
     };
 
     fetchOptions();
-  }, []);
+  }, [userBranch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +84,9 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
     if (!formState.district) return [];
     return branchOptions.filter(branch => branch.areaid === parseInt(formState.district));
   };
+
+  // Check if user is from head office
+  const isHeadOfficeUser = userBranchDetails?.areaid === 1;
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -93,6 +123,7 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
                 name="district"
                 value={formState.district}
                 onChange={handleChange}
+                disabled={!isHeadOfficeUser && userBranchDetails} // Disable if not head office
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               >
                 <option value="">Select District</option>
@@ -129,16 +160,15 @@ const ReportFilters = ({ reportType, onFilterChange }) => {
                 <option value="">Select Status</option>
                 {reportType === 'customer' && (
                   <>
-                    <option value="new">New</option>
-                    <option value="in progress">In Progress</option>
-                    <option value="contacted">Contacted</option>
+                    <option value="New">New</option>
+                    <option value="InProgress">In Progress</option>
+                    <option value="Contacted">Contacted</option>
                   </>
                 )}
                 {reportType === 'user' && (
                   <>
-                    <option value="new">Active</option>
-                    <option value="inprogress">Inactive</option>
-                    <option value="contacted">Suspended</option>
+                    <option value="Active">Active</option>
+                    <option value="Disabled">Disabled</option>
                   </>
                 )}
               </select>

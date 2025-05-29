@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux";
 
 interface PrivateRouteProps {
-  children: React.ReactNode; // Explicitly define the children prop
+  children: React.ReactNode;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
