@@ -36,8 +36,12 @@ export const userSlice = createSlice({
       return action.payload;
     },
     clearUser: () => initialState,
+    // update the token on (state.user.token part)
     updateToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload; // Ensures a new state is returned
+      return {
+        ...state,
+        token: action.payload
+      };
     },
   },
 });
