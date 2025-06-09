@@ -131,6 +131,7 @@ const UsersDashboard: React.FC = () => {
             <Card
               sx={{
                 borderLeft: `6px solid ${statusColors[status] || "#2196F3"}`,
+                marginTop: "20px",
                 height: 150, // Increased card height
                 display: "flex",
                 alignItems: "center",
@@ -138,7 +139,7 @@ const UsersDashboard: React.FC = () => {
               }}
             >
               <CardContent sx={{ textAlign: "center" }}>
-                <Typography variant="h6">{status} Users</Typography>
+                <Typography variant="h6">{status} Customers</Typography>
                 <Typography variant="h4" fontWeight="bold">
                   {typeof count == "number" ? count : 0}
                 </Typography>
@@ -148,7 +149,7 @@ const UsersDashboard: React.FC = () => {
         )
       )}
 
-      <Grid item xs={12} md={6}>
+      {/* <Grid item xs={12} md={6}>
         <Card>
           <CardContent>
             <Typography variant="h6">User Creation Graph</Typography>
@@ -194,7 +195,7 @@ const UsersDashboard: React.FC = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
